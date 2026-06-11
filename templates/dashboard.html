@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="stat-row">
+  <div class="stat"><div class="stat-label">Leave Balance</div><div class="stat-num blue">{{ stats.balance }}</div><div class="stat-sub">Days remaining</div></div>
+  <div class="stat"><div class="stat-label">Leaves Taken</div><div class="stat-num orange">{{ stats.taken }}</div><div class="stat-sub">This year</div></div>
+  <div class="stat"><div class="stat-label">Pending Requests</div><div class="stat-num red">{{ stats.pending }}</div><div class="stat-sub">Awaiting approval</div></div>
+  <div class="stat"><div class="stat-label">Team on Leave</div><div class="stat-num green">{{ stats.team_on_leave }}</div><div class="stat-sub">Today</div></div>
+</div>
+
+<div class="row2">
+  <div class="card">
+    <div class="card-title">Leave Balance</div>
+    {% for type, days in balance.items() %}
+    <div class="bar-row">
+      <span class="bar-label">{{ type }}</span>
+      <div class="bar-track"><div class="bar-fill" data-width="{{ [days * 3, 100]|min }}%"></div></div>
+      <span class="bar-count">{{ days }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recent Requests</div>
+    {% for l in recent %}
+    <div class="mini-item">
+      <div><div class="mini-name">{{ l.type }}</div><div class="mini-type">{{ l.from }} · {{ l.days }} day(s)</div></div>
+      <span class="badge {{ l.status|lower }}">{{ l.status }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

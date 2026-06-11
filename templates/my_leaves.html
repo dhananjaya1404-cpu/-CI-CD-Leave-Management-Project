@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}My Leaves{% endblock %}
+{% block content %}
+
+<div class="card">
+  <div class="filter-bar">
+    <div class="card-title" style="margin:0">My Leave History</div>
+    <form method="GET">
+      <select name="status" onchange="this.form.submit()">
+        <option value="All"      {% if request.args.get('status','All')=='All'      %}selected{% endif %}>All Leaves</option>
+        <option value="Pending"  {% if request.args.get('status')=='Pending'        %}selected{% endif %}>Pending</option>
+        <option value="Approved" {% if request.args.get('status')=='Approved'       %}selected{% endif %}>Approved</option>
+        <option value="Rejected" {% if request.args.get('status')=='Rejected'       %}selected{% endif %}>Rejected</option>
+      </select>
+    </form>
+  </div>
+
+  {% set filtered = leaves %}
+  {% set status_filter = request.args.get('status', 'All') %}
+  {% if status_filter != 'All' %}
+    {% set filtered = leaves | selectattr('status', 'equalto', status_filter) | list %}
+  {% endif %}
+
+  {% if filtered %}
+  <table>
+    <thead>
+      <tr>
+        <th>Leave ID</th>
+        <th>Type</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Days</th>
+        <th>Reason</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in filtered %}
+      <tr>
+        <td style="font-family:monospace;color:#888">#{{ l.id }}</td>
+        <td>{{ l.type }}</td>
+        <td>{{ l.from }}</td>
+        <td>{{ l.to }}</td>
+        <td><strong>{{ l.days }}</strong></td>
+        <td>{{ l.reason }}</td>
+        <td><span class="badge {{ l.status }}">{{ l.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">No {{ status_filter }} leaves found.</div>
+  {% endif %}
+</div>
+
+<!-- Summary strip -->
+<div class="stat-row" style="grid-template-columns:repeat(3,1fr)">
+  <div class="stat">
+    <div class="stat-label">Total Applied</div>
+    <div class="stat-num blue">{{ leaves | length }}</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Approved Days</div>
+    <div class="stat-num green">
+      {{ leaves | selectattr('status','equalto','Approved') | sum(attribute='days') }}
+    </div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Pending</div>
+    <div class="stat-num orange">
+      {{ leaves | selectattr('status','equalto','Pending') | list | length }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

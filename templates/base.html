@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>LeaveSync</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">&#128197; <span>LeaveSync</span></div>
+  <nav>
+    <a href="/"          class="nav-item {% if request.endpoint=='dashboard' %}active{% endif %}">&#9632; Dashboard</a>
+    <a href="/apply"     class="nav-item {% if request.endpoint=='apply'     %}active{% endif %}">&#43; Apply Leave</a>
+    <a href="/my-leaves" class="nav-item {% if request.endpoint=='my_leaves' %}active{% endif %}">&#128203; My Leaves</a>
+    <a href="/team"      class="nav-item {% if request.endpoint=='team'      %}active{% endif %}">&#128100; Team Calendar</a>
+    <a href="/admin"     class="nav-item {% if request.endpoint=='admin'     %}active{% endif %}">&#9881; Admin Panel</a>
+  </nav>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h2>{% block title %}Dashboard{% endblock %}</h2>
+    <div class="user-pill">
+      <div class="avatar">DH</div> Dhananjaya K H &nbsp;·&nbsp; Cloud Engineer
+    </div>
+  </div>
+
+  <div class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="alert alert-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+</body>
+</html>

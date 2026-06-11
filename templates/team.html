@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Team Calendar{% endblock %}
+{% block content %}
+
+<!-- Today's snapshot -->
+<div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+  <div class="stat">
+    <div class="stat-label">On Leave Today</div>
+    <div class="stat-num red">
+      {{ team_leaves | selectattr('status','equalto','Approved') | list | length }}
+    </div>
+    <div class="stat-sub">{{ today }}</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Pending Approvals</div>
+    <div class="stat-num orange">
+      {{ team_leaves | selectattr('status','equalto','Pending') | list | length }}
+    </div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Team Members</div>
+    <div class="stat-num blue">{{ team_leaves | map(attribute='emp_id') | unique | list | length }}</div>
+  </div>
+</div>
+
+<!-- Team leave table -->
+<div class="card">
+  <div class="card-title">Team Leave Status</div>
+  {% if team_leaves %}
+  <table>
+    <thead>
+      <tr>
+        <th>Employee</th>
+        <th>Department</th>
+        <th>Leave Type</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Days</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in team_leaves %}
+      {% set initials = l.emp.name.split()[0][0] ~ l.emp.name.split()[-1][0] %}
+      {% set colors = ['#e8f0fe|#4f8ef7','#d1fae5|#065f46','#fff3cd|#856404','#fee2e2|#991b1b','#f3e8ff|#6b21a8'] %}
+      {% set ci = loop.index0 % 5 %}
+      <tr>
+        <td>
+          <div class="emp-cell">
+            <div class="emp-av" style="background:{{ colors[ci].split('|')[0] }};color:{{ colors[ci].split('|')[1] }}">
+              {{ initials }}
+            </div>
+            {{ l.emp.name }}
+          </div>
+        </td>
+        <td>{{ l.emp.dept }}</td>
+        <td>{{ l.type }}</td>
+        <td>{{ l.from }}</td>
+        <td>{{ l.to }}</td>
+        <td><strong>{{ l.days }}</strong></td>
+        <td><span class="badge {{ l.status }}">{{ l.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">No team leaves found.</div>
+  {% endif %}
+</div>
+
+<!-- Department breakdown -->
+<div class="card">
+  <div class="card-title">Leaves by Department</div>
+  {% set departments = team_leaves | map(attribute='emp') | map(attribute='dept') | unique | list %}
+  {% for dept in departments %}
+    {% set dept_leaves = team_leaves | selectattr('emp.dept','equalto',dept) | list %}
+    <div class="bar-row">
+      <span class="bar-label">{{ dept }}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:{{ [dept_leaves|length * 25, 100]|min }}%"></div>
+      </div>
+      <span class="bar-count">{{ dept_leaves | length }}</span>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
