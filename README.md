@@ -189,18 +189,6 @@ Pipeline GREEN ✅
 
 ---
 
-## 👥 Sample Employees (Pre-loaded Data)
-
-| ID | Name | Department | Role |
-|---|---|---|---|
-| E001 | Azam Z | Backend | Cloud Engineer |
-| E002 | Dolly | Design | UI Designer |
-| E003 | Akash H | Backend | DevOps Engineer |
-| E004 | Manoj | QA | DevOps Engineer |
-| E005 | Dhanush D | DevOps | Software Engineer |
-
----
-
 ## 📊 Leave Types Supported
 
 | Type | Default Balance |
